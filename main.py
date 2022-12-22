@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import DataRequired
 
 
 
@@ -54,6 +57,10 @@ def save_data():
 @app.route("/workout_trainer")
 def search_trainer():
     return render_template("search_trainer.html")
+
+@app.route("/contact_form", methods=["GET","POST"])
+def contact():
+    return render_template("contact.html")
 
 
 
