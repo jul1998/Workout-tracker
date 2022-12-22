@@ -20,6 +20,18 @@ class WorkoutData(db.Model):
 #db.create_all()
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template("404.html"), 500
+
+
+
+
 @app.route("/")
 def index():
 
@@ -42,5 +54,8 @@ def save_data():
 @app.route("/workout_trainer")
 def search_trainer():
     return render_template("search_trainer.html")
+
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
