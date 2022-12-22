@@ -41,6 +41,6 @@ def save_data():
 
 @app.route("/workout_trainer")
 def search_trainer():
-    return None
+    return render_template("search_trainer.html")
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
