@@ -3,4 +3,12 @@
 
 <h1>Contact</h1>
 
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name(size=20) }}
+    {{ form.email.label }} {{ form.email(size=20) }}
+    <input type="submit" value="Go">
+
+</form>
+
 {%include "footer.html"%}

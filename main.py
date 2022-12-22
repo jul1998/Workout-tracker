@@ -1,13 +1,15 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
+from forms import ContactForm
 
 
 
 app = Flask(__name__)
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///workout.db'
+app.config["SECRET_KEY"] = "MySecretKey"
 db = SQLAlchemy(app)
 app.app_context().push()
 
@@ -60,7 +62,11 @@ def search_trainer():
 
 @app.route("/contact_form", methods=["GET","POST"])
 def contact():
-    return render_template("contact.html")
+    contact_form = ContactForm()
+    if contact_form.validate_on_submit():
+        print("Here")
+        return redirect ("/")
+    return render_template("contact.html", form=contact_form)
 
 
 
