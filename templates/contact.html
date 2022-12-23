@@ -1,14 +1,54 @@
 {% include "header.html" %}
 
 
-<h1>Contact</h1>
+<style>
+  /* Add some style to the form */
+  form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+  form label {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  form input,
+  form textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  form textarea {
+    height: 200px;
+  }
+  form button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  form button:hover {
+    background-color: #444;
+  }
+</style>
 
-<form method="POST" action="">
-    {{ form.hidden_tag() }}
-    {{ form.name.label }} {{ form.name(size=20) }}
-    {{ form.email.label }} {{ form.email(size=20) }}
-    <input type="submit" value="Go">
-
+<form method="post">
+  {{ form.csrf_token }}
+  {{ form.name.label }} {{ form.name }}
+  {{ form.email.label }} {{ form.email }}
+  {{ form.message.label }} {{ form.message }}
+  {{ form.submit }}
 </form>
 
 {%include "footer.html"%}

@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, PasswordField, EmailField, TextAreaField
+from wtforms.validators import DataRequired, Length
 
 class ContactForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
-    submit = SubmitField("Sign Me Up!")
+    email = EmailField('Email', validators=[DataRequired()])
+    message = TextAreaField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send Message')

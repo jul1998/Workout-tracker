@@ -64,7 +64,7 @@ def search_trainer():
 def contact():
     contact_form = ContactForm()
     if contact_form.validate_on_submit():
-        print("Here")
+        print(contact_form.email.data)
         return redirect ("/")
     return render_template("contact.html", form=contact_form)
 
