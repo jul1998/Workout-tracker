@@ -1,0 +1,81 @@
+{% include "header.html" %}
+<html>
+  <head>
+    <title>Gym Trainers</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .trainer {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .trainer-photo {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 20px;
+      }
+      .trainer-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .trainer-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .trainer-description {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .trainer-services {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .trainer-services li {
+        display: inline-block;
+        font-size: 14px;
+        background-color: #eee;
+        padding: 5px 10px;
+        margin-right: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Our Gym Trainers</h1>
+      <p>Welcome to our gym! We have a team of highly qualified and experienced trainers who can help you achieve your fitness goals. Here is a list of our trainers and the services they offer:</p>
+      <div class="trainer">
+        <img class="trainer-photo" src="https://images.unsplash.com/photo-1514989940723-e8e51635b782?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dHJhaW5lcnN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="Trainer 1">
+        <div class="trainer-info">
+          <div class="trainer-name">John Smith</div>
+          <p class="trainer-description">John is a certified personal trainer with over 10 years of experience in the fitness industry. He specializes in strength training and weight loss.</p>
+          <ul class="trainer-services">
+            <li>Personal Training</li>
+            <li>Group Training</li>
+            <li>Weight Loss</li>
+          </ul>
+        </div>
+      </div>
+      <div class="trainer">
+        <img class="trainer-photo" src="https://images.unsplash.com/photo-1514989940723-e8e51635b782?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dHJhaW5lcnN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="Trainer 2">
+        <div class="trainer-info">
+          <div class="trainer-name">Samantha Williams</div>
+          <p class="trainer-description">Samantha is a certified yoga instructor and personal trainer with a passion for helping people improve their mental and physical well-being. She offers a variety of yoga and fitness classes.</p>
+          <ul class="trainer-services">
+            <li>Personal Training</li>
+            <li>Yoga</li>
+          </ul>
+          </div>
+        </div>
+      </div>

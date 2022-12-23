@@ -56,7 +56,7 @@ def save_data():
 
 @app.route("/workout_trainer")
 def search_trainer():
-    return render_template("search_trainer.html")
+    return render_template("test_trainers.html")
 
 @app.route("/contact_form", methods=["GET","POST"])
 def contact():
