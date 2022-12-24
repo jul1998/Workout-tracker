@@ -1,5 +1,6 @@
 {% include "header.html" %}
 
+
 {% for message in get_flashed_messages() %}
 <div class="alert alert-success alert-dismissible fade show" role="alert">
   {{message}}
@@ -8,5 +9,8 @@
 
 {%endfor%}
 <h1>Hello</h1>
+
+
+
 
 {%include "footer.html"%}

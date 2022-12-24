@@ -3,15 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
-from forms import ContactForm
+from forms import ContactForm, RegistrationForm
+from flask_login import LoginManager
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
+login_manager = LoginManager()
 app = Flask(__name__)
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///workout.db'
 app.config["SECRET_KEY"] = "MySecretKey"
 db = SQLAlchemy(app)
 app.app_context().push()
+login_manager.init_app(app)
 
 
 class WorkoutData(db.Model):
@@ -28,8 +32,22 @@ class Contacts(db.Model):
     email = db.Column(db.String(250), nullable=False)
     message = db.Column(db.Text, nullable=False)
 
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String)
+    email = db.Column(db.String)
+    password = db.Column(db.String)
+
+    def __repr__(self):
+        return f"<User(name='{self.name}', email='{self.email}', password='{self.password}')>"
+
 #db.create_all()
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -38,7 +56,7 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def page_not_found(e):
-    return render_template("404.html"), 500
+    return render_template("500.html"), 500
 
 
 @app.route("/")
@@ -46,14 +64,34 @@ def index():
 
     return render_template("index.html")
 
+@app.route('/user_signup', methods=['GET', 'POST'])
+def signup():
+    registration_form = RegistrationForm()
+    if registration_form.validate_on_submit():
+        username = registration_form.username.data
+        email = registration_form.email.data
+        password = registration_form.password.data
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            hashed_password = generate_password_hash(password)
+            new_user = User(username=username, email=email, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Registration was successful")
+            return redirect("/")
+        else:
+            flash("user already exists")
+            return redirect("/")
+    return render_template("signup.html", form=registration_form)
+
+
 @app.route("/workout_data", methods=["GET", "POST"])
 def save_data():
     if request.method == "POST":
-        print("here")
         days = request.form.get('days')
         muscles = request.form.get('muscles')
         weight = request.form.get("weight")
-        print(weight)
         new_data = WorkoutData(day=days, muscle=muscles, weight=weight)
         db.session.add(new_data)
         db.session.commit()

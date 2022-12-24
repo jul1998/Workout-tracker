@@ -3,4 +3,6 @@ Flask-WTF==1.0.1
 SQLAlchemy==1.4.44
 flask-sqlalchemy==3.0.2
 python-dotenv==0.21.0
+Flask-Login==0.6.2
+
 gunicorn
