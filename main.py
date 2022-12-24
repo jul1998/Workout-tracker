@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField
@@ -21,6 +21,12 @@ class WorkoutData(db.Model):
    muscle = db.Column(db.String(250), nullable=False)
    weight = db.Column(db.Integer, nullable=False)
 
+class Contacts(db.Model):
+    __tablename__ = "contacts"
+    id = db.Column('id', db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    email = db.Column(db.String(250), nullable=False)
+    message = db.Column(db.Text, nullable=False)
 
 #db.create_all()
 
@@ -33,8 +39,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("404.html"), 500
-
-
 
 
 @app.route("/")
@@ -64,7 +68,13 @@ def search_trainer():
 def contact():
     contact_form = ContactForm()
     if contact_form.validate_on_submit():
-        print(contact_form.email.data)
+        form_email = contact_form.email.data
+        form_name =  contact_form.email.name
+        form_msg = contact_form.message.data
+        new_contact = Contacts(email=form_email, name=form_name, message=form_msg )
+        db.session.add(new_contact)
+        db.session.commit()
+        flash("Message sent successfully")
         return redirect ("/")
     return render_template("contact.html", form=contact_form)
 
