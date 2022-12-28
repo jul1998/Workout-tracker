@@ -33,8 +33,14 @@
     </div>
           <div  class="d-flex">
               <button id="dark-mode-button" class="btn btn-outline-dark">Toggle Dark Mode</button>
-              <a class="nav-link" href="{{url_for('signup')}}">Sign up</a>
-              <a class="nav-link" href="{{url_for('loging_page')}}">Login</a>
+              {%if not is_logged%}
+                <a class="nav-link" href="{{url_for('signup')}}">Sign up</a>
+                  <a class="nav-link" href="{{url_for('loging_page')}}">Login</a>
+              {%else%}
+
+              <a class="nav-link" href="{{url_for('logout_page')}}">Logout</a>
+              {%endif%}
+
         </div>
   </div>
 </nav>

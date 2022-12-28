@@ -4,10 +4,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
 from forms import ContactForm, RegistrationForm, LoginForm
-from flask_login import LoginManager, login_user, UserMixin
+from flask_login import LoginManager, login_user, UserMixin, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
-
+import requests
 
 login_manager = LoginManager()
 app = Flask(__name__)
@@ -44,25 +44,36 @@ class User(UserMixin,db.Model):
         return f"<User(name='{self.name}', email='{self.email}', password='{self.password}')>"
 
 #db.create_all()
-
+def show_cat_error(server_error):
+    response = requests.get(url=f"https://http.cat/{server_error}")
+    return response.url
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("404.html"), 404
-
+    error_url = show_cat_error(404)
+    return render_template("404.html", cat_error=error_url), 404
+@app.errorhandler(401)
+def page_not_authorized(e):
+    error_url = show_cat_error(401)
+    return render_template("401.html", cat_error=error_url), 401
 
 @app.errorhandler(500)
 def page_not_found(e):
-    return render_template("500.html"), 500
+    error_url = show_cat_error(500)
+    return render_template("500.html", cat_error=error_url ), 500
 
 
 @app.route("/")
 def index():
-
-    return render_template("index.html")
+    name = None
+    if current_user.is_authenticated:
+        name = current_user.username
+    return render_template("index.html",
+                           is_logged=current_user.is_authenticated,
+                           name=name)
 
 @app.route('/user_signup', methods=['GET', 'POST'])
 def signup():
@@ -103,15 +114,23 @@ def loging_page():
                     login_user(user)
                     flash("Login successfully")
                     print(user.is_authenticated)
-                    return render_template("index.html", name=user.username, logged_in=user.is_authenticated)
+                    return redirect(url_for("index"))
                 else:
                     flash("Password or user does not match")
-                    return redirect("/login")
+                    return redirect(url_for("loging_page"))
 
     return render_template("login.html", form=login_form)
 
+@app.route("/logout")
+@login_required
+def logout_page():
+    logout_user()
+    flash("User logout")
+    return redirect(url_for("index"))
+
 
 @app.route("/workout_data", methods=["GET", "POST"])
+@login_required
 def save_data():
     if request.method == "POST":
         days = request.form.get('days')
