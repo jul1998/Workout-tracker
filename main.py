@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
-from forms import ContactForm, RegistrationForm
-from flask_login import LoginManager
+from forms import ContactForm, RegistrationForm, LoginForm
+from flask_login import LoginManager, login_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_migrate import Migrate
 
 
 login_manager = LoginManager()
@@ -16,7 +16,7 @@ app.config["SECRET_KEY"] = "MySecretKey"
 db = SQLAlchemy(app)
 app.app_context().push()
 login_manager.init_app(app)
-
+migreate = Migrate(app,db)
 
 class WorkoutData(db.Model):
    __tablename__ = "workoutdata"
@@ -33,7 +33,7 @@ class Contacts(db.Model):
     message = db.Column(db.Text, nullable=False)
 
 
-class User(db.Model):
+class User(UserMixin,db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String)
@@ -47,7 +47,7 @@ class User(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(user_id)
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -79,11 +79,36 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             flash("Registration was successful")
-            return redirect("/")
+            return redirect("/")#This has to change to login
         else:
             flash("user already exists")
-            return redirect("/")
+            return redirect("/")#This has to change to login and flash message has to be red
     return render_template("signup.html", form=registration_form)
+
+@app.route("/login", methods=["GET", "POST"])
+def loging_page():
+    login_form = LoginForm()
+    if login_form.validate_on_submit():
+        email = login_form.email.data
+        password = login_form.password.data
+        try:
+            user = User.query.filter_by(email=email).first()
+            print(user.email)
+        except:
+            flash("User does not exist")
+            return redirect(url_for("loging_page"))
+        else:
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user)
+                    flash("Login successfully")
+                    print(user.is_authenticated)
+                    return render_template("index.html", name=user.username, logged_in=user.is_authenticated)
+                else:
+                    flash("Password or user does not match")
+                    return redirect("/login")
+
+    return render_template("login.html", form=login_form)
 
 
 @app.route("/workout_data", methods=["GET", "POST"])

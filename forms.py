@@ -17,3 +17,8 @@ class RegistrationForm(FlaskForm):
 
   confirm_password = PasswordField('Password', validators=[DataRequired()])
   submit = SubmitField('Sign me up!')
+
+class LoginForm(FlaskForm):
+    email = EmailField('Email', validators=[Length(min=4, max=25)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
