@@ -3,12 +3,9 @@
   color: white
 }
 
+
 .nav{
   background-color: #000;
   color: #fff;
 }
 
-.navbar-header > a{
-     padding: 10px 20px;
-     background-color: red
-}

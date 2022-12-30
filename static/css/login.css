@@ -1,8 +1,14 @@
 body {
-      font-family: sans-serif;
-      background-image: url("https://media1.giphy.com/media/S7u66urzxc2J2/giphy.gif?cid=ecf05e47kty8yuegklfrphgh2fzvbzui1n9r8r7cwvyz7s60&rid=giphy.gif&ct=g");
-    background-size: cover;
-    background-position: center;
-
+  height:100%;
+  width:100%;
+  margin:0;
 }
+
+.form-login {
+
+   place-content : center;
+   min-height    : 50vh;
+   margin-bottom: 50px
+
+   }
 

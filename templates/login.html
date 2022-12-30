@@ -1,19 +1,35 @@
  {% include "header.html" %}
+  <link href="{{url_for('static', filename='css/login.css')}}" rel="stylesheet" />
 
 {% for message in get_flashed_messages() %}
+
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
   {{message}}
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
  {%endfor%}
-    <h1>Login Form</h1>
-  <form class="form-login" method="post" action="/login">
+
+      <div class="container text-center">
+  <div class="row">
+
+    <div class="col align-self-center">
+      <div class="form-login">
+     <h1>Login</h1>
+       <form  method="post" action="/login">
     {{ form.csrf_token }}
     {{ form.email(placeholder='Email', class="form-control") }}
     {{ form.password(placeholder='Password', class="form-control") }}
       {{ form.submit (class="btn btn-primary") }}
 
    </form>
+    </div>
+
+  </div>
+</div>
+
+ </div>
+
+
 
 
  {%include "footer.html"%}
