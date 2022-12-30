@@ -1,3 +1,5 @@
+import random
+
 from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -140,11 +142,11 @@ def save_data():
         db.session.add(new_data)
         db.session.commit()
 
-    return render_template("workout_data.html")
+    return render_template("workout_data.html",  is_logged=current_user.is_authenticated)
 
 @app.route("/workout_trainer")
 def search_trainer():
-    return render_template("test_trainers.html")
+    return render_template("test_trainers.html",  is_logged=current_user.is_authenticated)
 
 @app.route("/contact_form", methods=["GET","POST"])
 def contact():
@@ -158,8 +160,14 @@ def contact():
         db.session.commit()
         flash("Message sent successfully")
         return redirect ("/")
-    return render_template("contact.html", form=contact_form)
+    return render_template("contact.html", form=contact_form,  is_logged=current_user.is_authenticated)
 
+@app.route("/generate_random_exercises")
+def random_exercises():
+    response = requests.get("https://api.npoint.io/5deec383d686ac3c0486")
+    all_data = response.json()
+    random_exercise_to_display = all_data[random.randint(0, len(all_data) - 1)]
+    return render_template("random_exercises.html", exercise_data=random_exercise_to_display)
 
 
 if __name__ == "__main__":

@@ -1,13 +1,11 @@
  body.dark-mode {
-  background-color: #032c5d;
+  background-color: #3B185F;
+  color: white
 }
+
 
 .nav{
   background-color: #000;
   color: #fff;
 }
 
-.navbar-header > a{
-     padding: 10px 20px;
-     background-color: red
-}

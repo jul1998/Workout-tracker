@@ -3,7 +3,6 @@
         font-family: sans-serif;
       }
       h1 {
-        color: darkblue;
         text-align: center;
       }
       .container {
@@ -30,4 +29,9 @@ img{
   height: 300px;
   margin-left: auto;
   display:flex
+}
+
+body{
+body {background-color: coral;}
+
 }

@@ -1,0 +1,19 @@
+ {% include "header.html" %}
+
+  <link href="{{url_for('static', filename='css/randomExercise.css')}}" rel="stylesheet" />
+
+<div class="container">
+
+  <h1 class="title">Random exercises</h1>
+  <h5>Exercise: {{exercise_data["exercise"]}}</h5>
+  <p>Duration: {{exercise_data["duration"]}}</p>
+  <div>
+   <img src={{exercise_data["image"]}} class="img-fluid" alt="...">
+  </div>
+  <button class="btn btn-primary">  <a style="color: white; text-decoration:none;" href="{{url_for('random_exercises')}}" id="button--a" class="button--changeExercise">Change exercise</a>
+</button>
+
+</div>
+<script src="{{url_for('static', filename='js/randomExercise.js')}}"></script>
+
+  {%include "footer.html"%}
