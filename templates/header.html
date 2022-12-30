@@ -21,7 +21,7 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-link active" aria-current="page" href="{{url_for('index')}}">Home</a>
-        <a class="nav-link" href="{{url_for('save_data')}}">Workout Info</a>
+
         <a class="nav-link" href="#">Pricing</a>
         <a class="nav-link" href="{{url_for('search_trainer')}}">Trainers</a>
         <a class="nav-link" href="{{url_for('contact')}}">Contact</a>
@@ -32,7 +32,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{{url_for('random_exercises')}}">View random exercises</a></li>
               <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="{{url_for('save_data')}}">Workout Info</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>

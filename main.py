@@ -169,12 +169,6 @@ def random_exercises():
     random_exercise_to_display = all_data[random.randint(0, len(all_data) - 1)]
     return render_template("random_exercises.html", exercise_data=random_exercise_to_display)
 
-@app.route("/new_exercise")
-def generate_new_exercise():
-    response = requests.get("https://api.npoint.io/5deec383d686ac3c0486")
-    all_data = response.json()
-    random_exercise_to_display = all_data[random.randint(0, len(all_data) - 1)]
-    return render_template("random_exercises.html", exercise_data=random_exercise_to_display)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
