@@ -10,10 +10,18 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 import requests
 from dotenv import load_dotenv
+import stripe
 import os
 load_dotenv()
 
+stripe_keys = {
+    'secret_key': 'sk_test_51MMFUJKfEnDDTBrd4iPHVPzlMhSzrCEzl3Vpd83qx33PzwsYE0WCsEhCdCHKwulRonvFC9bkAh71lvBUEem8XuaL00jQpDURgV',
+    'publishable_key': 'pk_test_51MMFUJKfEnDDTBrdRNmeAGId82Y4pcf6kNXHxRw7HTb1m6GpysbuN7bi9H69DdaL3odyOaHCi0AiDfJhxilLuH3100US8REtD1'
+}
 
+stripe.api_key = stripe_keys['secret_key']
+
+# website example https://www.strengthlog.com/exercise-directory/
 login_manager = LoginManager()
 app = Flask(__name__)
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///workout.db'
@@ -59,7 +67,8 @@ admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Contacts, db.session))
 admin.add_view(ModelView(WorkoutData, db.session))
 
-db.create_all()
+#db.drop_all()
+#db.create_all()
 
 #*--------------------------------------login user----------------------------
 
@@ -207,7 +216,36 @@ def random_exercises():
     response = requests.get("https://api.npoint.io/5deec383d686ac3c0486")
     all_data = response.json()
     random_exercise_to_display = all_data[random.randint(0, len(all_data) - 1)]
-    return render_template("random_exercises.html", exercise_data=random_exercise_to_display)
+    return render_template("random_exercises.html", exercise_data=random_exercise_to_display, is_logged=current_user.is_authenticated)
+
+@app.route("/charge", methods=["GET","POST"])
+def make_charge():
+    amount = 500
+
+
+    publishable = stripe_keys['publishable_key']
+    if request.method == "POST":
+        customer = stripe.Customer.create(
+            email='customer@example.com',
+            source=request.form['stripeToken']
+        )
+
+        charge = stripe.Charge.create(
+            customer=customer.id,
+            amount=amount,
+            currency='usd',
+            description='Flask Charge'
+        )
+
+    # charge = stripe.Charge.retrieve(
+    #     "ch_3MMFZKKfEnDDTBrd1y80HTfS",
+    #     api_key="sk_test_51MMFUJKfEnDDTBrd4iPHVPzlMhSzrCEzl3Vpd83qx33PzwsYE0WCsEhCdCHKwulRonvFC9bkAh71lvBUEem8XuaL00jQpDURgV"
+    # )
+    #charge.capture()
+
+    return render_template("paymentStripe.html", key=publishable)
+
+
 
 
 if __name__ == "__main__":

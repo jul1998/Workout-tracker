@@ -1,0 +1,19 @@
+ {% include "header.html" %}
+
+ <body>
+ <script src="{{ url_for('static', filename='js/stripe.js') }}"></script>
+    <h1>Hello</h1>
+
+<form action="/charge" method="post">
+  <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+          data-key="{{ key }}"
+          data-description="Flask Charge"
+          data-amount="500"
+          data-email="{{ current_user.email }}">
+  </script>
+  <input type="hidden" name="stripeToken" value="">
+</form>
+
+</body>
+
+  {%include "footer.html"%}
