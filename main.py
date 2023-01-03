@@ -1,25 +1,40 @@
 import random
-
-from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
+from functools import wraps
+from flask import Flask, render_template, request, redirect, flash, url_for, jsonify, wrappers, abort
 from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import FlaskForm
-from wtforms import StringField
-from wtforms.validators import DataRequired
 from forms import ContactForm, RegistrationForm, LoginForm
 from flask_login import LoginManager, login_user, UserMixin, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 import requests
+from dotenv import load_dotenv
+import stripe
+import os
+load_dotenv()
 
+stripe_keys = {
+    'secret_key': 'sk_test_51MMFUJKfEnDDTBrd4iPHVPzlMhSzrCEzl3Vpd83qx33PzwsYE0WCsEhCdCHKwulRonvFC9bkAh71lvBUEem8XuaL00jQpDURgV',
+    'publishable_key': 'pk_test_51MMFUJKfEnDDTBrdRNmeAGId82Y4pcf6kNXHxRw7HTb1m6GpysbuN7bi9H69DdaL3odyOaHCi0AiDfJhxilLuH3100US8REtD1'
+}
+
+stripe.api_key = stripe_keys['secret_key']
+
+# website example https://www.strengthlog.com/exercise-directory/
 login_manager = LoginManager()
 app = Flask(__name__)
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///workout.db'
-app.config["SECRET_KEY"] = "MySecretKey"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 app.app_context().push()
 login_manager.init_app(app)
 migreate = Migrate(app,db)
 
+app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+admin = Admin(app, name='WorkoutPageAdmin', template_mode='bootstrap3')
+
+#*--------------------------------------Models----------------------------
 class WorkoutData(db.Model):
    __tablename__ = "workoutdata"
    id = db.Column('id', db.Integer, primary_key = True)
@@ -45,14 +60,42 @@ class User(UserMixin,db.Model):
     def __repr__(self):
         return f"<User(name='{self.name}', email='{self.email}', password='{self.password}')>"
 
+
+#*--------------------------------------Admin views----------------------------
+
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Contacts, db.session))
+admin.add_view(ModelView(WorkoutData, db.session))
+
+#db.drop_all()
 #db.create_all()
-def show_cat_error(server_error):
-    response = requests.get(url=f"https://http.cat/{server_error}")
-    return response.url
+
+#*--------------------------------------login user----------------------------
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
+
+def admin_only(func):
+    @wraps(func)
+    def wrapper(*args,**kwargs):
+        try:
+            if current_user.id != 1:
+                return abort(403)
+
+        except TypeError or AttributeError:
+            pass
+        else:
+            return func(*args, **kwargs)
+    return wrapper
+
+
+#*--------------------------------------Handle Errors----------------------------
+
+def show_cat_error(server_error):
+    response = requests.get(url=f"https://http.cat/{server_error}")
+    return response.url
 @app.errorhandler(404)
 def page_not_found(e):
     error_url = show_cat_error(404)
@@ -62,12 +105,16 @@ def page_not_authorized(e):
     error_url = show_cat_error(401)
     return render_template("401.html", cat_error=error_url), 401
 
+@app.errorhandler(403)
+def page_not_found(e):
+    error_url = show_cat_error(403)
+    return render_template("403.html", cat_error=error_url), 403
 @app.errorhandler(500)
 def page_not_found(e):
     error_url = show_cat_error(500)
     return render_template("500.html", cat_error=error_url ), 500
 
-
+#*--------------------------------------Routes----------------------------
 @app.route("/")
 def index():
     name = None
@@ -145,6 +192,8 @@ def save_data():
     return render_template("workout_data.html",  is_logged=current_user.is_authenticated)
 
 @app.route("/workout_trainer")
+@admin_only
+@login_required
 def search_trainer():
     return render_template("test_trainers.html",  is_logged=current_user.is_authenticated)
 
@@ -167,7 +216,36 @@ def random_exercises():
     response = requests.get("https://api.npoint.io/5deec383d686ac3c0486")
     all_data = response.json()
     random_exercise_to_display = all_data[random.randint(0, len(all_data) - 1)]
-    return render_template("random_exercises.html", exercise_data=random_exercise_to_display)
+    return render_template("random_exercises.html", exercise_data=random_exercise_to_display, is_logged=current_user.is_authenticated)
+
+@app.route("/charge", methods=["GET","POST"])
+def make_charge():
+    amount = 500
+
+
+    publishable = stripe_keys['publishable_key']
+    if request.method == "POST":
+        customer = stripe.Customer.create(
+            email='customer@example.com',
+            source=request.form['stripeToken']
+        )
+
+        charge = stripe.Charge.create(
+            customer=customer.id,
+            amount=amount,
+            currency='usd',
+            description='Flask Charge'
+        )
+
+    # charge = stripe.Charge.retrieve(
+    #     "ch_3MMFZKKfEnDDTBrd1y80HTfS",
+    #     api_key="sk_test_51MMFUJKfEnDDTBrd4iPHVPzlMhSzrCEzl3Vpd83qx33PzwsYE0WCsEhCdCHKwulRonvFC9bkAh71lvBUEem8XuaL00jQpDURgV"
+    # )
+    #charge.capture()
+
+    return render_template("paymentStripe.html", key=publishable)
+
+
 
 
 if __name__ == "__main__":
