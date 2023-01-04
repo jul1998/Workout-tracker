@@ -14,25 +14,25 @@
 </head>
 <body>
 <div>
-    <nav id="navbar-header" class="navbar navbar-expand-lg bg-body-tertiary ">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <nav data-bs-theme="dark" id="navbar-header" class="navbar bg-dark navbar-expand-lg bg-body-tertiary ">
+  <div  style="color: #e3f2fd;" class="container-fluid">
+    <a  style="color: #e3f2fd;" class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="{{url_for('index')}}">Home</a>
+    <div  class="collapse navbar-collapse" >
+      <div  class="navbar-nav">
+        <a style="color: #e3f2fd;" class="nav-link active" aria-current="page" href="{{url_for('index')}}">Home</a>
 
-        <a class="nav-link active" href="#">Pricing</a>
-        <a class="nav-link active" href="{{url_for('search_trainer')}}">Trainers</a>
-        <a class="nav-link active" href="{{url_for('contact')}}">Contact</a>
+        <a style="color: #e3f2fd;" class="nav-link active" href="#">Pricing</a>
+        <a style="color: #e3f2fd;" class="nav-link active" href="{{url_for('search_trainer')}}">Trainers</a>
+        <a  style="color: #e3f2fd;" class="nav-link active" href="{{url_for('contact')}}">Contact</a>
           <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a style="color: #e3f2fd;" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Features
           </a>
-          <ul class="dropdown-menu">
+          <ul id="nav-content" class="dropdown-menu">
             <li><a class="dropdown-item" href="{{url_for('random_exercises')}}">View random exercises</a></li>
               <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{{url_for('save_data')}}">Workout Info</a></li>
@@ -44,8 +44,8 @@
       </div>
 
     </div>
-          <div  class="d-flex">
-              <button id="dark-mode-button" class="btn btn-outline-dark">Toggle Dark Mode</button>
+          <div class="d-flex">
+              <button style="color: #e3f2fd;" id="dark-mode-button" class="btn btn-outline-dark">Toggle Dark Mode</button>
               {%if not is_logged%}
                 <a class="nav-link" href="{{url_for('signup')}}">Sign up</a>
                   <a class="nav-link" href="{{url_for('loging_page')}}">Login</a>

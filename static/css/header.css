@@ -4,8 +4,12 @@
 }
 
 
-.nav{
-  background-color: #000;
-  color: #fff;
+#navbar-header{
+  color: white;
+
+}
+
+#nav-content{
+    color: white;
 }
 
