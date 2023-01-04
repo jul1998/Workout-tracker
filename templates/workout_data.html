@@ -1,13 +1,16 @@
 {% include "header.html" %}
 
 
+
+
+<head>
+  <link href="{{url_for('static', filename='css/workoutData.css')}}" rel="stylesheet" />
+</head>
+<body>
 <div style="margin:40px" class="container text-center">
   <div   class="row">
     <div style="padding:50px" class="col">
-
-
-
-     <form  method="POST">
+<form  method="POST">
         <div class="form-check">
             <input name="days" class="form-check-input" type="radio" value="Monday" id="flexCheckCheckedMonday">
             <label class="form-check-label" for="flexCheckCheckedMonday">
@@ -85,5 +88,8 @@
     </div>
   </div>
 </div>
+
+
+</body>
 
 {%include "footer.html"%}

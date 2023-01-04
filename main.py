@@ -41,6 +41,14 @@ class WorkoutData(db.Model):
    day = db.Column(db.String(250), nullable=False)
    muscle = db.Column(db.String(250), nullable=False)
    weight = db.Column(db.Integer, nullable=False)
+   user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+   user = db.relationship("User", back_populates="workout_data")
+
+   def serialize(self):
+       return({
+           "day":self.day,
+           "muscle": self.muscle
+       })
 
 class Contacts(db.Model):
     __tablename__ = "contacts"
@@ -51,14 +59,14 @@ class Contacts(db.Model):
 
 
 class User(UserMixin,db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String)
     email = db.Column(db.String)
     password = db.Column(db.String)
-
+    workout_data = db.relationship("WorkoutData", back_populates="user")
     def __repr__(self):
-        return f"<User(name='{self.name}', email='{self.email}', password='{self.password}')>"
+        return f"<User {self.username}'>"
 
 
 #*--------------------------------------Admin views----------------------------
@@ -185,9 +193,11 @@ def save_data():
         days = request.form.get('days')
         muscles = request.form.get('muscles')
         weight = request.form.get("weight")
-        new_data = WorkoutData(day=days, muscle=muscles, weight=weight)
+        new_data = WorkoutData(user_id=current_user.id,day=days, muscle=muscles, weight=weight)
         db.session.add(new_data)
         db.session.commit()
+    data = WorkoutData.query.filter_by(user_id=1).first()
+    print(data.user.username)# Continue here
 
     return render_template("workout_data.html",  is_logged=current_user.is_authenticated)
 
