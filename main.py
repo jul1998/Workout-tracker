@@ -46,8 +46,10 @@ class WorkoutData(db.Model):
 
    def serialize(self):
        return({
+           "id":self.id,
            "day":self.day,
-           "muscle": self.muscle
+           "muscle": self.muscle,
+           "weight": self.weight
        })
 
 class Contacts(db.Model):
@@ -196,10 +198,36 @@ def save_data():
         new_data = WorkoutData(user_id=current_user.id,day=days, muscle=muscles, weight=weight)
         db.session.add(new_data)
         db.session.commit()
-    data = WorkoutData.query.filter_by(user_id=1).first()
-    print(data.user.username)# Continue here
+    user_id = current_user.id
+    data = WorkoutData.query.filter_by(user_id=user_id).first()
+    try:
+        isData = True
+        username = data.user.username
+    except:
+        username= User.query.get(user_id).username
+        isData=False
+        return render_template("workout_data.html",
+                               is_logged=current_user.is_authenticated,
+                               username=username,
+                               isData=isData)
+    else:
+        username = data.user.username
+        all_data = WorkoutData.query.filter_by(user_id=user_id).all()
+        all_data_serialized = list(map(lambda data: data.serialize(), all_data))
+        print(all_data_serialized)
 
-    return render_template("workout_data.html",  is_logged=current_user.is_authenticated)
+        return render_template("workout_data.html",
+                           is_logged=current_user.is_authenticated,
+                           username=username,
+                           all_data_serialized=all_data_serialized,
+                           isData=isData)
+
+@app.route("/delete/workout_data/data/<int:data_id>")
+def delete_data(data_id):
+    data_to_delete = WorkoutData.query.filter_by(id=data_id).first()
+    db.session.delete(data_to_delete)
+    db.session.commit()
+    return redirect(url_for("save_data"))
 
 @app.route("/workout_trainer")
 @admin_only
