@@ -41,6 +41,16 @@ class WorkoutData(db.Model):
    day = db.Column(db.String(250), nullable=False)
    muscle = db.Column(db.String(250), nullable=False)
    weight = db.Column(db.Integer, nullable=False)
+   user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+   user = db.relationship("User", back_populates="workout_data")
+
+   def serialize(self):
+       return({
+           "id":self.id,
+           "day":self.day,
+           "muscle": self.muscle,
+           "weight": self.weight
+       })
 
 class Contacts(db.Model):
     __tablename__ = "contacts"
@@ -51,14 +61,14 @@ class Contacts(db.Model):
 
 
 class User(UserMixin,db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String)
     email = db.Column(db.String)
     password = db.Column(db.String)
-
+    workout_data = db.relationship("WorkoutData", back_populates="user")
     def __repr__(self):
-        return f"<User(name='{self.name}', email='{self.email}', password='{self.password}')>"
+        return f"<User {self.username}'>"
 
 
 #*--------------------------------------Admin views----------------------------
@@ -185,11 +195,39 @@ def save_data():
         days = request.form.get('days')
         muscles = request.form.get('muscles')
         weight = request.form.get("weight")
-        new_data = WorkoutData(day=days, muscle=muscles, weight=weight)
+        new_data = WorkoutData(user_id=current_user.id,day=days, muscle=muscles, weight=weight)
         db.session.add(new_data)
         db.session.commit()
+    user_id = current_user.id
+    data = WorkoutData.query.filter_by(user_id=user_id).first()
+    try:
+        isData = True
+        username = data.user.username
+    except:
+        username= User.query.get(user_id).username
+        isData=False
+        return render_template("workout_data.html",
+                               is_logged=current_user.is_authenticated,
+                               username=username,
+                               isData=isData)
+    else:
+        username = data.user.username
+        all_data = WorkoutData.query.filter_by(user_id=user_id).all()
+        all_data_serialized = list(map(lambda data: data.serialize(), all_data))
+        print(all_data_serialized)
 
-    return render_template("workout_data.html",  is_logged=current_user.is_authenticated)
+        return render_template("workout_data.html",
+                           is_logged=current_user.is_authenticated,
+                           username=username,
+                           all_data_serialized=all_data_serialized,
+                           isData=isData)
+
+@app.route("/delete/workout_data/data/<int:data_id>")
+def delete_data(data_id):
+    data_to_delete = WorkoutData.query.filter_by(id=data_id).first()
+    db.session.delete(data_to_delete)
+    db.session.commit()
+    return redirect(url_for("save_data"))
 
 @app.route("/workout_trainer")
 @admin_only
