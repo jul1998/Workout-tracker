@@ -1,0 +1,46 @@
+
+{% include "header.html" %}
+
+
+
+<head>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/timer.css')}}">
+</head>
+<body>
+<div class="container">
+  <h1>Timer setup</h1>
+  <div class="container text-center">
+  <div class="row align-items-start">
+    <div class="col">
+
+    </div>
+    <div class="col">
+      <form action="{{url_for('display_timer')}}", method="post">
+        <div>
+           <label for="timer--exercise">Exercise</label>
+          <input name="exercise" id="timer--exercise" class="form-control" type="text" placeholder="Default input" aria-label="default input example">
+        </div>
+
+        <div>
+           <label for="timer--rest">Rest</label>
+            <input name="rest" id="timer--rest" class="form-control" type="text" placeholder="Default input" aria-label="default input example">
+        </div>
+
+        <div>
+           <label for="timer--sets">Sets</label>
+            <input name="sets" id="timer--sets" class="form-control" type="text" placeholder="Default input" aria-label="default input example">
+        </div>
+        <button type="submit" class="btn btn-primary">Start!</button>
+
+  </form>
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+
+{%include "footer.html"%}

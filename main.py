@@ -256,6 +256,10 @@ def random_exercises():
     random_exercise_to_display = all_data[random.randint(0, len(all_data) - 1)]
     return render_template("random_exercises.html", exercise_data=random_exercise_to_display, is_logged=current_user.is_authenticated)
 
+
+@app.route("/timer_home", methods=["GET", "POST"])
+def display_timer():
+    return render_template("timer_setup.html")
 @app.route("/charge", methods=["GET","POST"])
 def make_charge():
     amount = 500

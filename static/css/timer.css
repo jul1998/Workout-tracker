@@ -1,0 +1,12 @@
+body{
+text-align: center;
+}
+
+div {
+        margin-bottom: 10px;
+      }
+label {
+        display: inline-block;
+
+        text-align: left;
+      }
