@@ -1,6 +1,6 @@
 import random
 from functools import wraps
-from flask import Flask, render_template, request, redirect, flash, url_for, jsonify, wrappers, abort
+from flask import Flask, render_template, request, redirect, flash, url_for, jsonify, wrappers, abort, session
 from flask_sqlalchemy import SQLAlchemy
 from forms import ContactForm, RegistrationForm, LoginForm
 from flask_login import LoginManager, login_user, UserMixin, logout_user, current_user, login_required
@@ -259,7 +259,40 @@ def random_exercises():
 
 @app.route("/timer_home", methods=["GET", "POST"])
 def display_timer():
+    if request.method == "POST":
+        exercise = int(request.form.get("exercise"))
+        rest = int(request.form.get("rest"))
+        sets = int(request.form.get("sets"))
+
+        session["exercise"] = exercise
+        session["rest"] = rest
+        session["sets"] = sets
+        session["set_counter"] = 0
+        return redirect(url_for("exercise"))
     return render_template("timer_setup.html")
+
+@app.route("/timer_rest", methods=["GET", "POST"])
+def rest():
+
+    return render_template("timer_rest.html", rest=session["rest"],
+                           sets_counter=session["set_counter"],
+                           sets=session["sets"]
+                           )
+
+@app.route("/timer_exercise", methods=["GET", "POST"])
+def exercise():
+    if session["sets"] == session["set_counter"]:
+        return render_template("timer_completed.html")
+    session["set_counter"] += 1
+    return render_template("timer_exercise.html", exercise=session["exercise"],
+                           sets_counter=session["set_counter"],
+                           sets=session["sets"])
+
+
+@app.route("/timer_complete", methods=["GET", "POST"])
+def completion():
+    return render_template("timer_completed.html")
+
 @app.route("/charge", methods=["GET","POST"])
 def make_charge():
     amount = 500

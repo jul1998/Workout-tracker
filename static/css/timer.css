@@ -10,3 +10,46 @@ label {
 
         text-align: left;
       }
+
+.timer-container {
+      width: 400px;
+      height: 20px;
+      border: 1px solid black;
+    }
+    /* styles for the timer bar */
+.timer-bar {
+      width: 100%;
+      height: 100%;
+      background-color: red;
+      transition: width 1s;
+    }
+.timer-bar-exercise{
+       width: 100%;
+      height: 100%;
+      background-color: red;
+      transition: width 1s;
+
+}
+
+.congrats-message {
+        visibility: hidden;
+        font-size: 2em;
+        text-align: center;
+        margin-top: 20px;
+        animation: message-fadein 2s forwards;
+        padding: 100px
+    }
+    /* Keyframe animation for the message */
+    @keyframes message-fadein {
+        from { opacity: 0; }
+        to { opacity: 1; visibility: visible;}
+    }
+
+.timer--display-sets{
+    font-size: 40px
+}
+
+.timer{
+    font-size: 50px
+}
+
