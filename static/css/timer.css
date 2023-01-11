@@ -1,5 +1,6 @@
 body{
 text-align: center;
+
 }
 
 div {
@@ -11,10 +12,16 @@ label {
         text-align: left;
       }
 
+.container{
+    padding:50px
+
+}
+
 .timer-container {
       width: 400px;
       height: 20px;
       border: 1px solid black;
+
     }
     /* styles for the timer bar */
 .timer-bar {
@@ -37,7 +44,7 @@ label {
         text-align: center;
         margin-top: 20px;
         animation: message-fadein 2s forwards;
-        padding: 100px
+        padding: 100px;
     }
     /* Keyframe animation for the message */
     @keyframes message-fadein {

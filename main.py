@@ -187,6 +187,7 @@ def logout_page():
     flash("User logout")
     return redirect(url_for("index"))
 
+#*--------------------------------------Workout data----------------------------
 
 @app.route("/workout_data", methods=["GET", "POST"])
 @login_required
@@ -228,6 +229,8 @@ def delete_data(data_id):
     db.session.delete(data_to_delete)
     db.session.commit()
     return redirect(url_for("save_data"))
+#*---------------------------------------------------------------------------
+
 
 @app.route("/workout_trainer")
 @admin_only
@@ -256,7 +259,7 @@ def random_exercises():
     random_exercise_to_display = all_data[random.randint(0, len(all_data) - 1)]
     return render_template("random_exercises.html", exercise_data=random_exercise_to_display, is_logged=current_user.is_authenticated)
 
-
+#*--------------------------------------Timer----------------------------
 @app.route("/timer_home", methods=["GET", "POST"])
 def display_timer():
     if request.method == "POST":
@@ -269,6 +272,7 @@ def display_timer():
         session["sets"] = sets
         session["set_counter"] = 0
         return redirect(url_for("exercise"))
+
     return render_template("timer_setup.html")
 
 @app.route("/timer_rest", methods=["GET", "POST"])
@@ -292,6 +296,8 @@ def exercise():
 @app.route("/timer_complete", methods=["GET", "POST"])
 def completion():
     return render_template("timer_completed.html")
+
+#*---------------------------------------------------------------------
 
 @app.route("/charge", methods=["GET","POST"])
 def make_charge():
