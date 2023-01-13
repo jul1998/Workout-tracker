@@ -1,7 +1,5 @@
 let timerElement = document.querySelector("#timer")
-
 let timerBar = document.querySelector("#timer-bar")
-
 let timerCounter = timerBar.max
 
 
@@ -17,7 +15,6 @@ if(timerCounter<=1){
    timerBar.value = timerCounter
 }
 },1000)
-
 
 
 

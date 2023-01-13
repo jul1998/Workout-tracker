@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 import requests
+from datetime import datetime, timezone, time
 from dotenv import load_dotenv
 import stripe
 import os
@@ -67,18 +68,41 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String)
     password = db.Column(db.String)
     workout_data = db.relationship("WorkoutData", back_populates="user")
+    timer_data = db.relationship("TimerData", back_populates="user")
     def __repr__(self):
         return f"<User {self.username}'>"
 
+class TimerData(db.Model):
+    __tablename__ = 'timerdata'
+    id = db.Column(db.Integer, primary_key=True)
+    exercise_seconds = db.Column(db.Integer, nullable=False)
+    rest_seconds = db.Column(db.Integer, nullable=False)
+    sets = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user = db.relationship("User", back_populates="timer_data")
+    def __repr__(self):
+        return f"<Timer {self.user}'>"
+
+    def serialize(self):
+        return ({
+            "id": self.id,
+            "exercise_seconds": self.exercise_seconds,
+            "rest_secods": self.rest_seconds,
+            "sets": self.sets,
+            "date": self.date,
+            "user": self.user.username
+        })
 
 #*--------------------------------------Admin views----------------------------
 
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Contacts, db.session))
 admin.add_view(ModelView(WorkoutData, db.session))
+admin.add_view(ModelView(TimerData, db.session))
 
-#db.drop_all()
-#db.create_all()
+# db.drop_all()
+# db.create_all()
 
 #*--------------------------------------login user----------------------------
 
@@ -261,19 +285,36 @@ def random_exercises():
 
 #*--------------------------------------Timer----------------------------
 @app.route("/timer_home", methods=["GET", "POST"])
+@login_required
 def display_timer():
+    now = datetime.now(timezone.utc)
     if request.method == "POST":
         exercise = int(request.form.get("exercise"))
         rest = int(request.form.get("rest"))
         sets = int(request.form.get("sets"))
+
+        add_timer_info = TimerData(exercise_seconds=exercise,
+                                 rest_seconds=rest,
+                                   sets=sets,
+                                   date=now,
+                                   user_id=current_user.id)
+        db.session.add(add_timer_info)
+        db.session.commit()
 
         session["exercise"] = exercise
         session["rest"] = rest
         session["sets"] = sets
         session["set_counter"] = 0
         return redirect(url_for("exercise"))
+    else:
+        all_data = TimerData.query.filter_by(user_id=current_user.id).all()
+        all_data_serialized = list(map(lambda timer_data: timer_data.serialize(), all_data))
 
-    return render_template("timer_setup.html")
+        print(all_data_serialized)
+        for data in all_data_serialized:
+            print(data["exercise_seconds"])
+
+    return render_template("timer_setup.html", is_logged=current_user.is_authenticated,all_data=all_data_serialized )
 
 @app.route("/timer_rest", methods=["GET", "POST"])
 def rest():
@@ -296,6 +337,8 @@ def exercise():
 @app.route("/timer_complete", methods=["GET", "POST"])
 def completion():
     return render_template("timer_completed.html")
+
+
 
 #*---------------------------------------------------------------------
 

@@ -33,6 +33,26 @@
         <button type="submit" class="btn btn-primary">Start!</button>
 
   </form>
+        <button onclick="handleOffCanvas()" id="timer-offcanvas" class="btn btn-outline-info mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Show worklog</button>
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Offcanvas with body scrolling</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group">
+        {%for data in all_data%}
+  <li class="list-group-item">
+      <p class="d-block p-2 text-bg-dark">User: {{data.user}}. / {{data.sets}}x / {{data.exercise_seconds}}s / {{data.rest_secods}}s</p>
+      <small class="d-block p-2 text-bg">{{data.date}}</small>
+  </li>
+    {%endfor%}
+
+
+</ul>
+  </div>
+</div>
     </div>
     <div class="col">
     </div>
@@ -46,29 +66,6 @@
   <div class="row">
     <div class="col">
 
-        <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-fullscreen-lg-down">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
     </div>
@@ -82,6 +79,7 @@
 </div>
 
 </div>
+<script src="{{url_for('static', filename='js/timerExercise.js')}}"></script>
 
 </body>
 
